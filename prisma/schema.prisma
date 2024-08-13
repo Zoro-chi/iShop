@@ -14,14 +14,12 @@ model User {
   emailVerified DateTime?
   image         String?
   hashedPassword String?
-//   sessions      Session[]
-//   Optional for WebAuthn support
-//   Authenticator Authenticator[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   role Role @default(USER)
 
   accounts      Account[]
+  orders        Order[]
 }
  
 model Account {
@@ -44,6 +42,48 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
  
   @@unique([provider, providerAccountId])
+}
+
+model Order {
+  id   String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String  @db.ObjectId
+  amount Float
+  currency String
+  status String
+  deliveryStatus String?
+  createdAt DateTime @default(now())
+  paymentIntentId String @unique
+  products CartProductType[]
+  address Address? 
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+type CartProductType  {
+	id String
+  name String
+  description String
+  category String
+  brand String
+  selectedImg Image
+  quantity Int
+  price Float
+}
+
+type Image {
+  color String
+  colorCode String
+  image String
+}
+
+type Address {
+  line1 String
+  line2 String?
+  city String
+  state String
+  postal_code String
+  country String
+  phone String
 }
  
 // model Session {

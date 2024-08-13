@@ -18,7 +18,7 @@ interface ProductDetailsProps {
 export type CartProductType = {
 	id: string;
 	name: string;
-	desription: string;
+	description: string;
 	category: string;
 	brand: string;
 	selectedImg: SelectedImageType;
@@ -42,7 +42,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
 	const [cartProduct, setCartProduct] = useState<CartProductType>({
 		id: product.id,
 		name: product.name,
-		desription: product.description,
+		description: product.description,
 		category: product.category,
 		brand: product.brand,
 		selectedImg: { ...product.images[0] },

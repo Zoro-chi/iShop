@@ -3,15 +3,22 @@
 import React from "react";
 import Link from "next/link";
 import { MdArrowBack } from "react-icons/md";
+import { useRouter } from "next/navigation";
 
 import { useCart } from "../../hooks/useCart";
 import Heading from "../components/Heading";
 import Button from "../components/Button";
 import ProductContent from "./ProductContent";
 import { formatPrice } from "../utils";
+import { SafeUser } from "@/types";
 
-const CartClient = () => {
+interface CartClientProps {
+	currentUser: SafeUser | null;
+}
+
+const CartClient: React.FC<CartClientProps> = ({ currentUser }) => {
 	const { cartProducts, handleClearCart, cartTotalPrice } = useCart();
+	const router = useRouter();
 
 	if (!cartProducts || cartProducts.length === 0) {
 		return (
@@ -62,7 +69,14 @@ const CartClient = () => {
 					<p className="text-slate-500">
 						Taxes and Shipping Calculated At Checkout
 					</p>
-					<Button label="Checkout" onClick={() => {}} />
+					<Button
+						label={currentUser ? "Checkout" : "Login To Checkout"}
+						outline={currentUser ? false : true}
+						onClick={() => {
+							currentUser ? router.push("/checkout") : router.push("/login");
+						}}
+						custom="hover:bg-teal-500 hover:text-white"
+					/>
 					<Link
 						href={"/"}
 						className="text-slate-500 flex items-center gap-1 mt-2"
