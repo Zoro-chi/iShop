@@ -22,8 +22,7 @@ export default async function handler(
 	const sig = req.headers["stripe-signature"];
 
 	if (!sig) {
-		res.status(400).send("No Stripe signature");
-		return;
+		return res.status(400).send("No Stripe signature");
 	}
 
 	let event: Stripe.Event;
@@ -40,26 +39,18 @@ export default async function handler(
 
 	switch (event.type) {
 		case "charge.succeeded":
-			const charge: any = event.data.object;
+			const charge: any = event.data.object as Stripe.Charge;
+			console.log("charge", charge);
+
 			if (typeof charge.payment_intent === "string") {
 				await prisma?.order.update({
 					where: {
 						paymentIntentId: charge.payment_intent,
 					},
-					// data: {
-					// 	status: "complete",
-					// 	address: charge.shipping?.address,
-					// },
 					data: {
 						status: "complete",
 						address: {
-							line1: charge.shipping?.address?.line1,
-							line2: charge.shipping?.address?.line2 || undefined,
-							city: charge.shipping?.address?.city,
-							state: charge.shipping?.address?.state,
-							postal_code: charge.shipping?.address?.postal_code,
-							country: charge.shipping?.address?.country,
-							phone: charge.shipping?.address?.phone,
+							set: charge.shipping?.address,
 						},
 					},
 				});
