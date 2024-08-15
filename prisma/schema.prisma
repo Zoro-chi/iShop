@@ -20,6 +20,7 @@ model User {
 
   accounts      Account[]
   orders        Order[]
+  reviews       Review[]
 }
  
 model Account {
@@ -42,6 +43,31 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
  
   @@unique([provider, providerAccountId])
+}
+
+model Product {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  category    String
+  brand       String
+  images      Image[]
+  price       Float
+  inStock     Boolean
+  reviews     Review[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+model Review {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String  @db.ObjectId
+  productId  String  @db.ObjectId
+  rating     Int
+  comment    String
+  createdAt  DateTime @default(now())
+  
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Order {
