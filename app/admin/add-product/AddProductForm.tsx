@@ -1,6 +1,14 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { useForm, FieldValues, SubmitHandler } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { useForm, FieldValues, SubmitHandler, set } from "react-hook-form";
+import {
+	getDownloadURL,
+	getStorage,
+	ref,
+	uploadBytesResumable,
+} from "firebase/storage";
 
 import Heading from "@/app/components/Heading";
 import Input from "@/app/components/inputs/Input";
@@ -11,6 +19,7 @@ import CategoryInput from "@/app/components/inputs/CategoryInput";
 import SelectColor from "@/app/components/inputs/SelectColor";
 import Button from "@/app/components/Button";
 import toast from "react-hot-toast";
+import firebaseApp from "@/libs/firebase";
 
 export type ImageType = {
 	color: string;
@@ -28,6 +37,7 @@ const AddProductForm = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [images, setImages] = useState<ImageType[] | null>();
 	const [isProductCreated, setIsProductCreated] = useState(false);
+	const router = useRouter();
 
 	const {
 		register,
@@ -82,12 +92,71 @@ const AddProductForm = () => {
 				for (const item of data.images) {
 					if (item.image) {
 						const fileName = new Date().getTime() + "-" + item.image.name;
+						const storage = getStorage(firebaseApp);
+						const storageRef = ref(storage, `products/${fileName}`);
+						const uploadTask = uploadBytesResumable(storageRef, item.image);
+
+						await new Promise<void>((resolve, reject) => {
+							uploadTask.on(
+								"state_changed",
+								(snapshot) => {
+									const progress =
+										(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+									console.log("Upload is " + progress + "% done");
+									switch (snapshot.state) {
+										case "paused":
+											console.log("Upload is paused");
+											break;
+										case "running":
+											console.log("Upload is running");
+											break;
+									}
+								},
+								(error) => {
+									console.log("Error Uploading Image", error);
+									reject(error);
+								},
+								() => {
+									getDownloadURL(uploadTask.snapshot.ref)
+										.then((downloadURL) => {
+											uploadedImages.push({
+												...item,
+												image: downloadURL,
+											});
+											console.log("File available at", downloadURL);
+											resolve();
+										})
+										.catch((error) => {
+											console.log("Error Getting Download URL", error);
+											reject(error);
+										});
+								}
+							);
+						});
 					}
 				}
-			} catch (error) {}
+			} catch (error) {
+				setIsLoading(false);
+				console.log("Error Uploading Images", error);
+				return toast.error("Error Uploading Images");
+			}
 		};
+		await handleImageUploads();
+		const productData = { ...data, images: uploadedImages };
 
-		// Save Product to MongoDB
+		axios
+			.post("/api/product", productData)
+			.then((response) => {
+				toast.success("Product Created Successfully");
+				setIsProductCreated(true);
+				router.refresh();
+			})
+			.catch((error) => {
+				toast.error("Error Creating Product");
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	const category = watch("category");
