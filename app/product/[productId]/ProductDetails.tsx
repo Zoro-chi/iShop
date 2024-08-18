@@ -4,10 +4,10 @@ import { use, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Rating } from "@mui/material";
 
-import SetColor from "./SetColor";
-import SetQuantity from "./SetQuantity";
-import Button from "../Button";
-import ProductImage from "./ProductImage";
+import SetColor from "../../components/products/SetColor";
+import SetQuantity from "../../components/products/SetQuantity";
+import Button from "../../components/Button";
+import ProductImage from "../../components/products/ProductImage";
 import { useCart } from "@/hooks/useCart";
 import { MdCheckCircle } from "react-icons/md";
 

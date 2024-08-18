@@ -1,17 +1,19 @@
 import moment from "moment";
 import { Rating } from "@mui/material";
 
-import Heading from "../Heading";
-import Avatar from "../Avatar";
+import Heading from "../../components/Heading";
+import Avatar from "../../components/Avatar";
 
 interface ListRatingsProps {
 	product: any;
 }
 
 const ListRatings: React.FC<ListRatingsProps> = ({ product }) => {
+	if (product.reviews.length === 0) return null;
+
 	return (
 		<div>
-			<Heading titlle="Product Review" />
+			<Heading title="Product Review" />
 			<div className="text-sm mt-2 ">
 				{product.reviews &&
 					product.reviews.map((review: any) => {

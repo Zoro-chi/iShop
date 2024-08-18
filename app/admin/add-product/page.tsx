@@ -9,8 +9,9 @@ import NullData from "@/app/components/NullData";
 const AddProduct = async () => {
 	const currentUser = await getCurrentUser();
 
-	if (!currentUser || currentUser.role !== "ADMIN")
-		return <NullData title="You are not authorized to view this page" />;
+	if (!currentUser) return <NullData title="Un-Authorized Access" />;
+	if (currentUser.role !== "ADMIN")
+		return <NullData title="Un-Authorized Access" />;
 
 	return (
 		<div className="p-8 ">

@@ -12,3 +12,7 @@ export const truncateString = (str: string) => {
 		return str;
 	}
 };
+
+export const formatNumber = (num: number) => {
+	return new Intl.NumberFormat("en-us").format(num);
+};

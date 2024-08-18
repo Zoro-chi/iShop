@@ -5,7 +5,8 @@ import { getCurrentUser } from "@/actions/getCurrentUser";
 
 export async function PUT(req: Request) {
 	const currentUser = await getCurrentUser();
-	if (!currentUser || currentUser.role !== "ADMIN") return NextResponse.error();
+	if (!currentUser) return NextResponse.error();
+	if (currentUser.role !== "ADMIN") return NextResponse.error();
 
 	const body = await req.json();
 	const { id, deliveryStatus } = body;
