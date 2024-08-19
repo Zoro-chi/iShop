@@ -1,4 +1,4 @@
-import React from "react";
+export const dynamic = "force-dynamic";
 
 import ManageProductClient from "./ManageProductClient";
 import Container from "@/app/components/Container";
