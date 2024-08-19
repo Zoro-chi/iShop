@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 	const currentUser = await getCurrentUser();
 
 	if (!currentUser) {
-		return NextResponse.error();
+		return NextResponse.json({ error: "No User Found" }, { status: 404 });
 	}
 
 	const body = await req.json();
@@ -65,14 +65,17 @@ export async function POST(req: Request) {
 				]);
 
 				if (!existing_order) {
-					return NextResponse.error();
+					return NextResponse.json(
+						{ error: "No Order Found" },
+						{ status: 404 }
+					);
 				}
 
 				return NextResponse.json({ paymentIntent: updatedIntent });
 			}
 		} catch (error: any) {
 			console.log(error);
-			return NextResponse.error();
+			return NextResponse.json({ error: "An Error Occured" }, { status: 500 });
 		}
 	} else {
 		try {
@@ -90,7 +93,8 @@ export async function POST(req: Request) {
 			return NextResponse.json({ paymentIntent });
 		} catch (error: any) {
 			console.log(error);
-			return NextResponse.error();
+			// return NextResponse.error();
+			return NextResponse.json({ error: "An error occurred" }, { status: 500 });
 		}
 	}
 }

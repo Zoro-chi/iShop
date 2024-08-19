@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 import getOrderById from "@/actions/getOrderById";
 import Container from "@/app/components/Container";

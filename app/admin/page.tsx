@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 import Summary from "./Summary";
 import getProducts from "@/actions/getProducts";

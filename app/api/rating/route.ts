@@ -1,3 +1,5 @@
+// export const dynamic = "force-dynamic";
+
 import { getCurrentUser } from "@/actions/getCurrentUser";
 import { Review } from "@prisma/client";
 import { NextResponse } from "next/server";
@@ -5,8 +7,11 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
 	try {
 		const currentUser = await getCurrentUser();
-		if (!currentUser) return NextResponse.error();
-
+		if (!currentUser)
+			return NextResponse.json(
+				{ error: "Un-Authorized Access" },
+				{ status: 403 }
+			);
 		const body = await req.json();
 		const { comment, rating, product, userId } = body;
 
@@ -21,7 +26,10 @@ export async function POST(req: Request) {
 		});
 
 		if (userReview || !deliveredOrder) {
-			return NextResponse.error();
+			return NextResponse.json(
+				{ error: "Unable to leave rating" },
+				{ status: 400 }
+			);
 		}
 
 		const review = await prisma.review.create({
@@ -35,6 +43,6 @@ export async function POST(req: Request) {
 		return NextResponse.json(review);
 	} catch (error: any) {
 		console.log(error);
-		NextResponse.error();
+		return NextResponse.json({ error: "An error occurred" }, { status: 500 });
 	}
 }
