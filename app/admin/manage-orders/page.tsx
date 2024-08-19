@@ -13,7 +13,7 @@ const ManageOrders = async () => {
 	if (currentUser.role !== "ADMIN")
 		return <NullData title="Un-Authorized Access" />;
 
-	const orders = await getOrders(currentUser.id);
+	const orders = await getOrders();
 
 	return (
 		<div className="pt-8">

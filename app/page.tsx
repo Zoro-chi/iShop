@@ -1,7 +1,7 @@
-import Image from "next/image";
+export const revalidate = 0;
+
 import Container from "./components/Container";
 import HomeBanner from "./components/HomeBanner";
-import { products, truncateString } from "./utils";
 import ProductsCard from "./components/products/ProductsCard";
 import getProducts, { IProductParams } from "@/actions/getProducts";
 import NullData from "./components/NullData";
@@ -31,8 +31,8 @@ export default async function Home({ searchParams }: HomeProps) {
 				<div>
 					<HomeBanner />
 					<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap:8">
-						{shuffledProducts.map((product: any, index: number) => {
-							return <ProductsCard data={product} key={index} />;
+						{shuffledProducts.map((product: any) => {
+							return <ProductsCard data={product} key={product.id} />;
 						})}
 					</div>
 				</div>

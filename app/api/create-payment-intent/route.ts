@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 	const currentUser = await getCurrentUser();
 
 	if (!currentUser) {
-		return NextResponse.json({ error: "Unathorized" }, { status: 401 });
+		return NextResponse.error();
 	}
 
 	const body = await req.json();
@@ -65,17 +65,14 @@ export async function POST(req: Request) {
 				]);
 
 				if (!existing_order) {
-					return NextResponse.json(
-						{ error: "Invalid Payment Intent" },
-						{ status: 400 }
-					);
+					return NextResponse.error();
 				}
 
 				return NextResponse.json({ paymentIntent: updatedIntent });
 			}
 		} catch (error: any) {
 			console.log(error);
-			return NextResponse.json({ error: error.message }, { status: 500 });
+			return NextResponse.error();
 		}
 	} else {
 		try {
@@ -93,7 +90,7 @@ export async function POST(req: Request) {
 			return NextResponse.json({ paymentIntent });
 		} catch (error: any) {
 			console.log(error);
-			return NextResponse.json({ error: error.message }, { status: 500 });
+			return NextResponse.error();
 		}
 	}
 }

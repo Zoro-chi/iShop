@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { useForm, FieldValues, SubmitHandler, set } from "react-hook-form";
+import { useForm, FieldValues, SubmitHandler } from "react-hook-form";
 import {
 	getDownloadURL,
 	getStorage,
@@ -35,7 +35,7 @@ export type UploadedImageType = {
 
 const AddProductForm = () => {
 	const [isLoading, setIsLoading] = useState(false);
-	const [images, setImages] = useState<ImageType[] | null>();
+	const [images, setImages] = useState<ImageType[] | null>(null);
 	const [isProductCreated, setIsProductCreated] = useState(false);
 	const router = useRouter();
 
@@ -58,6 +58,14 @@ const AddProductForm = () => {
 		},
 	});
 
+	const setCustomValue = (id: string, value: any) => {
+		setValue(id, value, {
+			shouldValidate: true,
+			shouldDirty: true,
+			shouldTouch: true,
+		});
+	};
+
 	useEffect(() => {
 		setCustomValue("images", images);
 	}, [images]);
@@ -66,15 +74,13 @@ const AddProductForm = () => {
 		if (isProductCreated) {
 			reset();
 			setImages(null);
-			setIsProductCreated(false);
+			setIsProductCreated(false); // Reset the flag after resetting the form
 		}
-	}, []);
+	}, [isProductCreated, reset]);
 
 	const onSubmit: SubmitHandler<FieldValues> = async (data) => {
 		console.log("Product Data", data);
-		// Upload images to firebase
 		setIsLoading(true);
-		let uploadedImages: UploadedImageType[] = [];
 
 		if (!data.category) {
 			setIsLoading(false);
@@ -85,6 +91,8 @@ const AddProductForm = () => {
 			setIsLoading(false);
 			return toast.error("No Selected Image");
 		}
+
+		let uploadedImages: UploadedImageType[] = [];
 
 		const handleImageUploads = async () => {
 			toast("Creating Products, Please Wait...");
@@ -103,14 +111,6 @@ const AddProductForm = () => {
 									const progress =
 										(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 									console.log("Upload is " + progress + "% done");
-									switch (snapshot.state) {
-										case "paused":
-											console.log("Upload is paused");
-											break;
-										case "running":
-											console.log("Upload is running");
-											break;
-									}
 								},
 								(error) => {
 									console.log("Error Uploading Image", error);
@@ -141,7 +141,9 @@ const AddProductForm = () => {
 				return toast.error("Error Uploading Images");
 			}
 		};
+
 		await handleImageUploads();
+
 		const productData = { ...data, images: uploadedImages };
 
 		axios
@@ -156,18 +158,12 @@ const AddProductForm = () => {
 			})
 			.finally(() => {
 				setIsLoading(false);
+				reset(); // Reset form fields immediately after successful submission
+				setImages(null); // Clear the images state
 			});
 	};
 
 	const category = watch("category");
-
-	const setCustomValue = (id: string, value: any) => {
-		setValue(id, value, {
-			shouldValidate: true,
-			shouldDirty: true,
-			shouldTouch: true,
-		});
-	};
 
 	const addImageToState = useCallback((value: ImageType) => {
 		setImages((prev) => {
