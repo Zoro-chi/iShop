@@ -11,7 +11,6 @@ import toast from "react-hot-toast";
 
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "../utils";
-import { set } from "react-hook-form";
 import Heading from "../components/Heading";
 import Button from "../components/Button";
 

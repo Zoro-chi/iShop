@@ -9,7 +9,7 @@ import {
 } from "react";
 import { toast } from "react-hot-toast";
 
-import { CartProductType } from "@/app/components/products/ProductDetails";
+import { CartProductType } from "../app/product/[productId]/ProductDetails";
 
 type CartContextType = {
 	cartTotalQty: number;

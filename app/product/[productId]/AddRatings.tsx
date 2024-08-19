@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { FieldValues, set, SubmitErrorHandler, useForm } from "react-hook-form";
+import { FieldValues, SubmitErrorHandler, useForm } from "react-hook-form";
 import { Rating } from "@mui/material";
 import toast from "react-hot-toast";
 

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import { CartProductType } from "../components/products/ProductDetails";
+import { CartProductType } from "@prisma/client";
 import { formatPrice, truncateString } from "../utils";
 import SetQuantity from "../components/products/SetQuantity";
 import { useCart } from "@/hooks/useCart";
